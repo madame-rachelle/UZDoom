@@ -53,6 +53,11 @@ jobs:
           deps_cmdline: sudo apt-get update && sudo apt-get install libsdl2-dev libvpx-dev libwebp-dev waylandpp-dev libbz2-dev libomp-dev libopenal-dev
           build_type: Debug
 
+        - name: Windows MSVC ARM64
+          os: windows-11-arm
+          extra_options: -A ARM64
+          build_type: Release
+
     steps:
     - uses: actions/checkout@v4
 
@@ -92,15 +97,31 @@ jobs:
 
         if [[ "${{ runner.os }}" == 'Windows' ]]; then
 
-            fetch oalsoft.zip \
-                7a9871038cb8eb954b4f723c9f86b248f914fc59 \
-                https://github.com/kcat/openal-soft/releases/download/1.23.1/openal-soft-1.23.1-bin.zip
-            unzip -j oalsoft.zip openal-soft-1.23.1-bin/bin/Win64/soft_oal.dll -d package
+            if [[ "${{ runner.arch }}" == 'X64' ]]; then
 
-            fetch sndfile.zip \
-                610569766aa1c138044a30af43db6ec6195ed164 \
-                https://github.com/libsndfile/libsndfile/releases/download/1.2.2/libsndfile-1.2.2-win64.zip
-            unzip -j sndfile.zip libsndfile-1.2.2-win64/bin/sndfile.dll -d package
+                fetch oalsoft.zip \
+                    7a9871038cb8eb954b4f723c9f86b248f914fc59 \
+                    https://github.com/kcat/openal-soft/releases/download/1.23.1/openal-soft-1.23.1-bin.zip
+                unzip -j oalsoft.zip openal-soft-1.23.1-bin/bin/Win64/soft_oal.dll -d package
+
+                fetch sndfile.zip \
+                    610569766aa1c138044a30af43db6ec6195ed164 \
+                    https://github.com/libsndfile/libsndfile/releases/download/1.2.2/libsndfile-1.2.2-win64.zip
+                unzip -j sndfile.zip libsndfile-1.2.2-win64/bin/sndfile.dll -d package
+
+            elif [[ "${{ runner.arch }}" == 'ARM64' ]]; then
+
+                fetch oalsoft.zip \
+                    20410a89200de63475372e7deb4836cd3d88bff4 \
+                    https://sp.drdteam.org/oal-win32-arm64-1-24-3.zip
+                unzip -j oalsoft.zip soft_oal.dll -d package
+
+                fetch sndfile.zip \
+                    cd8dc083996c6a079cdd31c7017b8224f34cd55c \
+                    https://sp.drdteam.org/lsf-win32-arm64-1-2-2.zip
+                unzip -j sndfile.zip sndfile.dll -d package
+
+            fi
 
             mkdir package/soundfonts
             cp ../soundfont/uzdoom.sf2 package/soundfonts
