@@ -53,6 +53,7 @@ if(WIN32)
             /wd4820 # structure padding
             /wd4946 # reinterpret_cast used between related classes
             /wd5027 # move assignment operator was implicitly defined as deleted
+            /Od #[SP]don't optimize
         )
     endif(MSVC)
     target_link_libraries(discord-rpc PRIVATE psapi advapi32)
@@ -76,6 +77,7 @@ if(UNIX)
         -Wall
         -Wextra
         -Wpedantic
+        -O0
     )
 
     if (${CMAKE_BUILD_TYPE} STREQUAL Debug OR ${CMAKE_BUILD_TYPE} STREQUAL RelWithDebInfo)
